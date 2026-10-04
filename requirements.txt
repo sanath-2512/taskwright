@@ -1,0 +1,9 @@
+playwright>=1.45
+fastapi>=0.110
+uvicorn>=0.29
+python-multipart>=0.0.9
+pypdf>=4.0
+reportlab>=4.0
+markdown>=3.5
+python-dotenv>=1.0
+pytest>=8.0

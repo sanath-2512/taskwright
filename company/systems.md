@@ -1,0 +1,3 @@
+- Mail: the shared AP mailbox (ap@northstar.example). Vendor invoices arrive here as PDF attachments; replies to vendors are sent from here. {{BASE_URL}}/mail
+- Ledgerly: the AP system of record. Sign-in required (credentials LEDGERLY_USERNAME / LEDGERLY_PASSWORD). {{BASE_URL}}/erp
+- Handbook: procedures and the vendor directory (also searchable with search_knowledge). {{BASE_URL}}/wiki

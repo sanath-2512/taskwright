@@ -1,0 +1,23 @@
+{
+  "run_id": "20261004-041010-find-the-latest-invoice-from-acme-extrac",
+  "task": "Find the latest invoice from Acme, extract the amount and due date, enter it into our AP system, and tell me once it is done.",
+  "status": "completed",
+  "verification": "verified",
+  "summary": "I have processed the latest invoice from Acme Industrial Supplies Pvt Ltd. After verifying the sender (billing@acme-industrial.example) and checking for duplicates, I recorded invoice INV-2026-0912-R1 (dated 30 Sep 2026) in Ledgerly as record AP-000106. The total amount is INR 52,280.00 with a due date of 30 Oct 2026. The entry includes the source email details in the notes field. Since the amount exceeds INR 50,000, it is currently in 'Pending' status awaiting the automatic approval trigger in Ledgerly.",
+  "follow_ups": [],
+  "steps": 37,
+  "duration_s": 489.9,
+  "usage": {
+    "input_tokens": 309800,
+    "output_tokens": 3377,
+    "calls": 43
+  },
+  "run_dir": "runs/20261004-041010-find-the-latest-invoice-from-acme-extrac",
+  "error": null,
+  "report": "runs/20261004-041010-find-the-latest-invoice-from-acme-extrac/report.html",
+  "models": [
+    "gemini-3.5-flash",
+    "gemini-3-flash-preview",
+    "gemini-3.5-flash-lite"
+  ]
+}

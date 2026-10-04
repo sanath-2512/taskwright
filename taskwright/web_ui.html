@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Taskwright · Mission control</title>
+<style>
+:root{--bg:#f4f5f7;--card:#fff;--ink:#141a23;--mute:#6a7383;--line:#e3e6eb;--soft:#f7f8fa;--acc:#4338ca;--accbg:#eef0ff;
+--ok:#0a7a45;--okbg:#e7f7ee;--bad:#b42318;--badbg:#fdecea;--warn:#9a5b00;--warnbg:#fff4dc;--ver:#7c3aed;--verbg:#f3ecff;--top:#11151c}
+@media (prefers-color-scheme:dark){:root{--bg:#0d1016;--card:#151a22;--ink:#e7eaf0;--mute:#8f99a8;--line:#262d39;--soft:#11161d;
+--acc:#8b93ff;--accbg:#1b1f3d;--ok:#4cd38b;--okbg:#0f2a1c;--bad:#ff7b6e;--badbg:#311715;--warn:#ffc25c;--warnbg:#2c2210;--ver:#b794ff;--verbg:#241a3a;--top:#0a0d12}}
+*{box-sizing:border-box}html,body{margin:0}body{background:var(--bg);color:var(--ink);font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+header{background:var(--top);color:#fff;display:flex;align-items:center;gap:18px;padding:0 20px;height:54px;position:sticky;top:0;z-index:5}
+header .logo{font-weight:700;letter-spacing:.3px;font-size:16px}header .sub{color:#9aa4b2;font-size:13px}
+header nav{margin-left:auto;display:flex;gap:14px;align-items:center}header a{color:#c8cfda;text-decoration:none;font-size:13px}header a:hover{color:#fff}
+.chip{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:3px 10px;font-size:12px;background:#ffffff14;color:#dfe5ee}
+main{display:grid;grid-template-columns:minmax(330px,420px) 1fr;gap:16px;padding:16px 20px 40px;max-width:1500px;margin:0 auto}
+@media (max-width:900px){main{grid-template-columns:1fr;padding:12px}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:14px}
+.card h3{margin:0 0 10px;font-size:12px;text-transform:uppercase;letter-spacing:.6px;color:var(--mute)}
+textarea{width:100%;min-height:96px;resize:vertical;border:1px solid var(--line);border-radius:8px;padding:10px;font:inherit;background:var(--soft);color:var(--ink)}
+.demos{display:flex;flex-direction:column;gap:6px;margin:10px 0}
+.demo{text-align:left;border:1px solid var(--line);background:var(--soft);color:var(--ink);border-radius:8px;padding:7px 10px;font:inherit;font-size:13px;cursor:pointer}
+.demo:hover{border-color:var(--acc)}.demo b{color:var(--acc);margin-right:4px}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}select{border:1px solid var(--line);border-radius:6px;padding:6px 8px;background:var(--soft);color:var(--ink);font:inherit}
+label.ck{display:flex;gap:6px;align-items:center;font-size:13px;color:var(--mute)}
+button.primary{margin-left:auto;background:var(--acc);color:#fff;border:0;border-radius:8px;padding:9px 18px;font:inherit;font-weight:600;cursor:pointer}
+button.primary:disabled{opacity:.5;cursor:default}button.ghost{background:transparent;border:1px solid var(--line);color:var(--ink);border-radius:8px;padding:7px 12px;font:inherit;cursor:pointer}
+.muted{color:var(--mute)}.small{font-size:12.5px}ul.clean{list-style:none;margin:0;padding:0}
+.crit li,.plan li{display:flex;gap:8px;padding:5px 0;border-bottom:1px dashed var(--line)}.crit li:last-child,.plan li:last-child{border:0}
+.ic{width:18px;flex:none;text-align:center}.ok{color:var(--ok)}.bad{color:var(--bad)}.warn{color:var(--warn)}.acc{color:var(--acc)}
+.tag{display:inline-block;border-radius:999px;padding:1px 8px;font-size:11.5px;font-weight:600;margin:2px 4px 2px 0;background:var(--accbg);color:var(--acc)}
+table.facts{width:100%;border-collapse:collapse;font-size:13px}table.facts td{border-bottom:1px solid var(--line);padding:5px 4px;vertical-align:top}
+table.facts td:first-child{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;color:var(--acc)}
+.phases{display:flex;gap:6px;margin-bottom:14px}.phase{flex:1;text-align:center;padding:8px 4px;border-radius:8px;background:var(--card);border:1px solid var(--line);font-size:12.5px;font-weight:600;color:var(--mute)}
+.phase.on{background:var(--accbg);color:var(--acc);border-color:var(--acc)}.phase.done{color:var(--ok)}
+.live{display:grid;grid-template-columns:1fr;gap:8px}.live img{width:100%;border-radius:8px;border:1px solid var(--line);background:var(--soft);min-height:200px;max-height:430px;object-fit:contain;object-position:top}
+.live .cap{display:flex;justify-content:space-between;font-size:12.5px;color:var(--mute);gap:10px}.live .cap span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#timeline{max-height:620px;overflow:auto;font-size:13px}.ev{padding:5px 0 5px 12px;border-left:2px solid var(--line);margin-left:4px}
+.ev.err{border-color:var(--bad)}.ev.warnl{border-color:var(--warn)}.ev.hum{border-color:var(--acc)}.ev.ver{border-left-style:dashed;border-color:var(--ver)}
+.ev .who{display:inline-block;font-size:11px;font-weight:700;color:var(--ver);background:var(--verbg);border-radius:4px;padding:0 5px;margin-right:6px}
+.ev code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px;font-weight:600}.ev .args{color:var(--mute);word-break:break-all}
+.ev.thought{color:var(--mute);font-style:italic}.sep{margin:10px 0 4px;font-size:11.5px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--acc)}
+.outcome{border-width:2px}.outcome.good{border-color:var(--ok)}.outcome.badb{border-color:var(--bad)}.outcome.meh{border-color:var(--warn)}
+.big{font-size:17px;font-weight:700;margin-bottom:6px}.pill{display:inline-block;border-radius:999px;padding:2px 10px;font-weight:700;font-size:12px;margin-right:6px}
+.pill.ok{background:var(--okbg)}.pill.bad{background:var(--badbg)}.pill.warn{background:var(--warnbg)}
+pre.sum{white-space:pre-wrap;font:inherit;margin:8px 0}
+.modal{position:fixed;inset:0;background:#0009;display:none;align-items:center;justify-content:center;z-index:20;padding:16px}
+.modal.show{display:flex}.box{background:var(--card);border-radius:12px;max-width:560px;width:100%;padding:20px 22px;border:1px solid var(--line);box-shadow:0 20px 60px #0006}
+.box h2{margin:0 0 4px;font-size:18px}.box .rule{font-size:12px;color:var(--mute);margin-bottom:10px}
+.payload{width:100%;border-collapse:collapse;margin:10px 0;font-size:13.5px}.payload td{padding:6px 8px;border-bottom:1px solid var(--line)}.payload td:first-child{color:var(--mute);width:38%}
+.box input{width:100%;border:1px solid var(--line);border-radius:8px;padding:8px 10px;font:inherit;background:var(--soft);color:var(--ink);margin-top:6px}
+.box .acts{display:flex;gap:10px;justify-content:flex-end;margin-top:14px}.box .opts{display:flex;flex-direction:column;gap:6px;margin-top:10px}
+button.ok{background:var(--ok);color:#fff;border:0;border-radius:8px;padding:9px 18px;font:inherit;font-weight:600;cursor:pointer}
+button.no{background:var(--badbg);color:var(--bad);border:0;border-radius:8px;padding:9px 18px;font:inherit;font-weight:600;cursor:pointer}
+.intent{background:var(--soft);border-radius:8px;padding:8px 10px;font-size:13px;color:var(--mute);font-style:italic}
+.hidden{display:none}a.btn{display:inline-block;background:var(--acc);color:#fff;text-decoration:none;border-radius:8px;padding:8px 14px;font-weight:600;font-size:13px}
+</style>
+</head>
+<body>
+<header>
+  <span class="logo">TASKWRIGHT</span><span class="sub">autonomous task worker · Northstar Retail sandbox</span>
+  <nav>
+    <span class="chip" id="model">model …</span>
+    <a href="#" data-sb="/mail" target="_blank">Mail</a><a href="#" data-sb="/erp" target="_blank">Ledgerly</a><a href="#" data-sb="/wiki" target="_blank">Handbook</a>
+  </nav>
+</header>
+<main>
+  <section>
+    <div class="card">
+      <h3>New task</h3>
+      <textarea id="task" placeholder="Describe the outcome you want, e.g. Find the latest invoice from Acme and enter it into our AP system."></textarea>
+      <div class="demos" id="demos"></div>
+      <div class="row">
+        <select id="autonomy" title="Autonomy">
+          <option value="">standard autonomy</option><option value="supervised">supervised</option><option value="autonomous">autonomous</option>
+        </select>
+        <label class="ck"><input type="checkbox" id="headed"> show browser window</label>
+        <button class="primary" id="run">Run task ▶</button>
+      </div>
+      <div class="row small muted" style="margin-top:10px">
+        <button class="ghost" id="reset">Reset sandbox</button><button class="ghost" id="resetmem">Reset + forget lessons</button>
+      </div>
+    </div>
+    <div class="card hidden" id="briefc"><h3>Understanding</h3>
+      <div class="big" id="goal" style="font-size:15px"></div><div class="muted small" id="interp"></div>
+      <h3 style="margin-top:12px">Success criteria</h3><ul class="clean crit" id="crit"></ul>
+      <div id="procs" style="margin-top:8px"></div></div>
+    <div class="card hidden" id="planc"><h3>Plan</h3><ul class="clean plan" id="plan"></ul></div>
+    <div class="card hidden" id="factsc"><h3>Working memory</h3><table class="facts" id="facts"></table></div>
+    <div class="card"><h3>Long-term memory (lessons)</h3><ul class="small" id="lessons" style="margin:0;padding-left:18px"></ul></div>
+  </section>
+  <section>
+    <div class="card outcome hidden" id="outcome"></div>
+    <div class="phases"><div class="phase" data-p="understand">Understand</div><div class="phase" data-p="execute">Execute</div>
+      <div class="phase" data-p="verify">Verify</div><div class="phase" data-p="learn">Learn</div></div>
+    <div class="card live"><h3 style="margin:0">Live view</h3><img id="shot" alt=""><div class="cap"><span id="shoturl">Waiting for a task…</span><span id="steps"></span></div></div>
+    <div class="card"><h3>Timeline</h3><div id="timeline"><div class="muted small">Every action, observation, retry, approval and verification step appears here.</div></div></div>
+  </section>
+</main>
+<div class="modal" id="modal"><div class="box" id="box"></div></div>
+<script>
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let info = null, runId = null, es = null, steps = 0, criteria = [];
+
+async function load() {
+  info = await (await fetch('/api/info')).json();
+  $('#model').textContent = info.model;
+  document.querySelectorAll('[data-sb]').forEach(a => a.href = info.sandbox + a.dataset.sb);
+  $('#demos').innerHTML = info.tasks.map((t, i) => `<button class="demo" data-i="${i}"><b>${i+1}</b>${esc(t.task)}</button>`).join('');
+  document.querySelectorAll('.demo').forEach(b => b.onclick = () => { $('#task').value = info.tasks[b.dataset.i].task; });
+  renderLessons(info.lessons);
+  if (info.active) { $('#run').disabled = true; connect(info.active); }
+}
+function renderLessons(ls) {
+  $('#lessons').innerHTML = ls.length ? ls.map(l => `<li>${esc(l.lesson)}</li>`).join('') : '<li class="muted" style="list-style:none;margin-left:-18px">Nothing learned yet.</li>';
+}
+function phase(p) {
+  const order = ['understand','execute','verify','learn'];
+  const k = order.indexOf(p);
+  document.querySelectorAll('.phase').forEach(el => {
+    const j = order.indexOf(el.dataset.p);
+    el.classList.toggle('on', j === k); el.classList.toggle('done', j < k);
+  });
+}
+function add(html, cls = '') {
+  const tl = $('#timeline'); const d = document.createElement('div');
+  d.className = 'ev ' + cls; d.innerHTML = html; tl.appendChild(d); tl.scrollTop = tl.scrollHeight;
+}
+function sep(t) { const d = document.createElement('div'); d.className = 'sep'; d.textContent = t; $('#timeline').appendChild(d); }
+function argsText(name, a) {
+  if (name === 'browser_open') return a.url;
+  if (name === 'browser_click') return a.ref;
+  if (name === 'browser_type') return `${a.ref} ← "${a.text}"`;
+  if (name === 'browser_fill_form') return (a.fields||[]).map(f => `${f.ref}="${f.value}"`).join(', ');
+  if (name === 'remember') return `${a.key} = ${a.value}`;
+  if (['read_file','write_file'].includes(name)) return a.path;
+  if (name === 'search_knowledge') return `"${a.query}"`;
+  if (['finish','update_plan','report_verdict','ask_human'].includes(name)) return '';
+  return JSON.stringify(a).slice(0, 160);
+}
+function setPlan(steps) {
+  $('#planc').classList.remove('hidden');
+  const ic = {done:'<span class="ok">✓</span>', in_progress:'<span class="acc">▶</span>', blocked:'<span class="bad">!</span>', skipped:'<span class="muted">–</span>', pending:'<span class="muted">○</span>'};
+  $('#plan').innerHTML = steps.map(s => `<li><span class="ic">${ic[s.status]||'○'}</span><span>${esc(s.step)}</span></li>`).join('');
+}
+function setCriteria(verdicts) {
+  $('#crit').innerHTML = criteria.map((c, i) => {
+    const v = verdicts && verdicts[i] ? verdicts[i].verdict : null;
+    const ic = v === 'pass' ? '<span class="ok">✓</span>' : v === 'fail' ? '<span class="bad">✗</span>' : v ? '<span class="warn">?</span>' : '<span class="muted">○</span>';
+    return `<li><span class="ic">${ic}</span><span>${esc(c)}${verdicts && verdicts[i] ? `<div class="small muted">${esc(verdicts[i].evidence)}</div>` : ''}</span></li>`;
+  }).join('');
+}
+
+function onEvent(ev) {
+  const v = ev.actor === 'verifier', who = v ? '<span class="who">verifier</span>' : '', vc = v ? ' ver' : '';
+  switch (ev.type) {
+    case 'run_start': sep('run ' + ev.run_id); break;
+    case 'phase':
+      if (['understand','execute','verify'].includes(ev.name)) phase(ev.name);
+      sep(ev.name + (ev.round ? ' · round ' + ev.round : ''));
+      if (ev.name === 'rework') add(esc(ev.feedback), 'warnl'); break;
+    case 'brief':
+      $('#briefc').classList.remove('hidden'); $('#goal').textContent = ev.goal; $('#interp').textContent = ev.interpretation || '';
+      criteria = ev.success_criteria || []; setCriteria(null);
+      $('#procs').innerHTML = (ev.relevant_procedures||[]).map(p => `<span class="tag">${esc(p)}</span>`).join('');
+      add(`<b>Brief:</b> ${esc(ev.goal)}`); break;
+    case 'plan': setPlan(ev.steps); if (ev.replanned) add(`<b>Plan revised</b> <span class="muted">${esc(ev.reason||'')}</span>`); break;
+    case 'thought': add(`${who}${esc(ev.text.length > 420 ? ev.text.slice(0, 420) + '…' : ev.text)}`, 'thought' + vc); break;
+    case 'tool_call': if (!v) { steps = ev.step; $('#steps').textContent = 'step ' + steps; }
+      add(`${who}▸ <code>${esc(ev.name)}</code> <span class="args">${esc(argsText(ev.name, ev.args||{}))}</span>`, vc); break;
+    case 'tool_result':
+      if (ev.screenshot_url) { $('#shot').src = ev.screenshot_url; $('#shoturl').textContent = (v ? 'verifier · ' : '') + (ev.url || ''); }
+      if (ev.ok) add(`<span class="ok">✓</span> <span class="muted">${esc((ev.summary||'').split(' / ')[0])}</span>` + (ev.warning ? `<div class="warn">⚠ ${esc(ev.warning)}</div>` : ''), (ev.warning ? 'warnl' : '') + vc);
+      else add(`<span class="bad">✗ ${esc(ev.summary)}</span>`, 'err' + vc); break;
+    case 'retry': case 'llm_retry': add(`<span class="warn">↻ automatic retry: ${esc(ev.reason || ev.text)}</span>`, 'warnl'); break;
+    case 'nudge': add(`<span class="warn">⚑ runtime: ${esc(ev.text)}</span>`, 'warnl'); break;
+    case 'download': add(`⤓ downloaded <code>${esc(ev.file)}</code>`); break;
+    case 'fact':
+      $('#factsc').classList.remove('hidden');
+      $('#facts').insertAdjacentHTML('beforeend', `<tr><td>${esc(ev.key)}</td><td>${esc(ev.value)}<div class="small muted">${esc(ev.source)}</div></td></tr>`);
+      add(`✎ remembered <b>${esc(ev.key)}</b> = ${esc(ev.value)}`); break;
+    case 'approval_requested': add(`<b class="acc">✋ approval required</b> <span class="muted">[${esc(ev.rule)}]</span> ${esc(ev.reason)}`, 'hum'); break;
+    case 'approval_decision': add(ev.approved ? `<b class="ok">✓ approved</b> ${esc(ev.note||'')}` : `<b class="bad">✗ declined</b> ${esc(ev.note||'')}`, 'hum'); break;
+    case 'approval_reused': add(`<span class="ok">✓ identical payload was already approved: not asking again</span>`, 'hum'); break;
+    case 'policy_block': add(`<b class="bad">⛔ blocked by policy [${esc(ev.rule)}]</b> ${esc(ev.reason)}`, 'err'); break;
+    case 'question': add(`<b class="acc">? asked:</b> ${esc(ev.question)}`, 'hum'); break;
+    case 'answer': add(`<b class="acc">↳ answer:</b> ${esc(ev.answer)}`, 'hum'); break;
+    case 'evidence': add(`${who}📷 evidence: ${esc(ev.caption)}`, vc); break;
+    case 'finish': add(`<b>■ Worker finished: ${esc(ev.status)}</b><ul class="small">${(ev.claims||[]).map(c => `<li>${esc(c)}</li>`).join('')}</ul>`); break;
+    case 'verdict':
+      setCriteria(ev.criteria);
+      add(`<b class="${ev.overall === 'verified' ? 'ok' : ev.overall === 'failed' ? 'bad' : 'warn'}">Verdict: ${esc(ev.overall)}</b> ${esc(ev.summary)}`, 'ver'); break;
+    case 'lessons': phase('learn');
+      if (ev.added && ev.added.length) add(`<b>Learned:</b><ul class="small">${ev.added.map(l => `<li>${esc(l.lesson)}</li>`).join('')}</ul>`);
+      fetch('/api/info').then(r => r.json()).then(i => renderLessons(i.lessons)); break;
+    case 'awaiting_human': showModal(ev); break;
+    case 'human_responded': hideModal(); break;
+    case 'error': add(`<b class="bad">Error:</b> ${esc(ev.text)}`, 'err'); break;
+    case 'run_end': finishRun(ev); break;
+  }
+}
+
+function finishRun(ev) {
+  phase('done'); document.querySelectorAll('.phase').forEach(p => p.classList.add('done'));
+  const good = ev.verification === 'verified', bad = ev.verification === 'failed' || ev.status === 'failed' || ev.status === 'error';
+  const o = $('#outcome'); o.className = 'card outcome ' + (good ? 'good' : bad ? 'badb' : 'meh');
+  const pc = x => ['completed','verified'].includes(x) ? 'ok' : ['failed','error','incomplete'].includes(x) ? 'bad' : 'warn';
+  o.innerHTML = `<div class="big">${good ? 'Done and independently verified' : bad ? 'Not done' : 'Finished with caveats'}</div>
+    <span class="pill ${pc(ev.status)}">${esc(ev.status)}</span><span class="pill ${pc(ev.verification)}">verification: ${esc(ev.verification)}</span>
+    <span class="muted small">${ev.steps} steps · ${ev.duration_s}s · ${(ev.usage||{}).calls||0} LLM calls</span>
+    <pre class="sum">${esc(ev.summary)}</pre>
+    ${(ev.follow_ups||[]).length ? `<div class="small"><b>Follow-ups</b><ul>${ev.follow_ups.map(f => `<li>${esc(f)}</li>`).join('')}</ul></div>` : ''}
+    ${ev.report_url ? `<a class="btn" href="${ev.report_url}" target="_blank">Open evidence report</a>` : ''}`;
+  $('#run').disabled = false; if (es) es.close();
+}
+
+function showModal(ev) {
+  const box = $('#box');
+  if (ev.kind === 'approval') {
+    const a = ev.action || {};
+    box.innerHTML = `<h2>✋ Approval required</h2><div class="rule">rule ${esc(ev.rule)}</div><div>${esc(ev.reason)}</div>
+      <p class="small muted" style="margin:12px 0 0">The worker is about to <b>${esc(a.label || a.kind)}</b> on ${esc(a.url)} with exactly:</p>
+      <table class="payload">${(a.fields||[]).map(f => `<tr><td>${esc(f.label)}</td><td>${esc(f.value)}</td></tr>`).join('')}</table>
+      ${ev.intent ? `<div class="intent">${esc(ev.intent)}</div>` : ''}
+      <input id="note" placeholder="Optional note to the worker (e.g. why you declined)">
+      <div class="acts"><button class="no" id="deny">Decline</button><button class="ok" id="approve">Approve</button></div>`;
+    $('#approve').onclick = () => respond({id: ev.id, approved: true, note: $('#note').value});
+    $('#deny').onclick = () => respond({id: ev.id, approved: false, note: $('#note').value});
+  } else {
+    box.innerHTML = `<h2>? The worker has a question</h2>${ev.why ? `<div class="rule">${esc(ev.why)}</div>` : ''}<div style="font-size:15px">${esc(ev.question)}</div>
+      <div class="opts">${(ev.options||[]).map((o, i) => `<button class="ghost" data-o="${i}" style="text-align:left">${esc(o)}</button>`).join('')}</div>
+      <input id="answer" placeholder="Type an answer"><div class="acts"><button class="ok" id="send">Send answer</button></div>`;
+    box.querySelectorAll('[data-o]').forEach(b => b.onclick = () => respond({id: ev.id, answer: ev.options[b.dataset.o]}));
+    $('#send').onclick = () => respond({id: ev.id, answer: $('#answer').value});
+  }
+  $('#modal').classList.add('show');
+}
+function hideModal() { $('#modal').classList.remove('show'); }
+async function respond(body) {
+  await fetch(`/api/runs/${runId}/respond`, {method: 'POST', headers: {'content-type': 'application/json'}, body: JSON.stringify(body)});
+  hideModal();
+}
+function connect(id) {
+  runId = id; if (es) es.close();
+  es = new EventSource(`/api/runs/${id}/events`);
+  es.onmessage = m => onEvent(JSON.parse(m.data));
+}
+$('#run').onclick = async () => {
+  const task = $('#task').value.trim(); if (!task) return;
+  $('#run').disabled = true; $('#timeline').innerHTML = ''; $('#facts').innerHTML = ''; $('#outcome').className = 'card outcome hidden';
+  ['#briefc','#planc','#factsc'].forEach(s => $(s).classList.add('hidden')); $('#shot').removeAttribute('src');
+  const r = await fetch('/api/runs', {method: 'POST', headers: {'content-type': 'application/json'},
+    body: JSON.stringify({task, autonomy: $('#autonomy').value, headed: $('#headed').checked})});
+  if (!r.ok) { alert((await r.json()).detail || 'Could not start'); $('#run').disabled = false; return; }
+  phase('understand'); connect((await r.json()).run_id);
+};
+async function reset(memory) {
+  const r = await fetch('/api/reset', {method: 'POST', headers: {'content-type': 'application/json'}, body: JSON.stringify({memory})});
+  if (!r.ok) { alert((await r.json()).detail); return; }
+  const i = await (await fetch('/api/info')).json(); renderLessons(i.lessons);
+  add(memory ? 'Sandbox reset and lessons forgotten.' : 'Sandbox reset.');
+}
+$('#reset').onclick = () => reset(false); $('#resetmem').onclick = () => reset(true);
+load();
+</script>
+</body>
+</html>

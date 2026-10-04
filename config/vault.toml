@@ -1,0 +1,18 @@
+# Credential vault (sandbox test credentials only).
+#
+# The model only ever sees the *names* below. It types {{secret:NAME}} and the
+# runtime substitutes the value at the moment of typing, and only on the
+# allowed hosts, so a prompt-injected page cannot get the agent to type a
+# password into some other site. Values never appear in prompts, logs,
+# traces or reports.
+
+[LEDGERLY_USERNAME]
+description = "Ledgerly AP system - automation account username"
+value = "ap.bot"
+allowed_hosts = ["127.0.0.1", "localhost"]
+sensitive = false   # a username is not secret; shown as-is
+
+[LEDGERLY_PASSWORD]
+description = "Ledgerly AP system - automation account password"
+value = "Northstar#2026"
+allowed_hosts = ["127.0.0.1", "localhost"]

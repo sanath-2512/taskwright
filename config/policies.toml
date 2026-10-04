@@ -1,0 +1,45 @@
+# Guardrails enforced by the runtime, not by the prompt.
+#
+# The model never decides whether an action needs approval. Before any
+# state-changing browser action (a form submit, a "Save"/"Send"/"Delete"
+# button) the runtime inspects exactly what is about to be submitted and
+# evaluates these rules against it.
+#
+# autonomy:
+#   supervised  - every state-changing action needs a human approval
+#   standard    - only actions matching an "approve" rule need approval
+#   autonomous  - no approvals; "deny" rules still apply
+autonomy = "standard"
+
+[[rules]]
+id = "ap-high-value-invoice"
+description = "Invoices of INR 50,000 or more need Finance Manager approval before they are recorded (Handbook AP-3)."
+effect = "approve"
+action = "commit"
+url_contains = "/erp/invoices/new"
+field = "amount"
+gte = 50000
+
+[[rules]]
+id = "external-email"
+description = "Emails to addresses outside @northstar.example are reviewed before sending."
+effect = "approve"
+action = "commit"
+url_contains = "/mail/compose"
+field = "to"
+not_contains = "@northstar.example"
+
+[[rules]]
+id = "no-destructive-actions"
+description = "The agent may not delete, void or pay anything."
+effect = "deny"
+action = "commit"
+label_matches = "(?i)\\b(delete|remove|void|pay now|release payment|transfer)\\b"
+
+[[rules]]
+id = "no-bank-detail-changes"
+description = "Vendor bank details may only be changed by Procurement."
+effect = "deny"
+action = "commit"
+field = "bank_account"
+present = true
